@@ -5,7 +5,8 @@ public class Pixel extends Location{
 	
 	//for 16-bit pixel RGB values
 	static final int maxValueOfPixel = 65535;
-	static final float offsetValue = (float)0.05;
+	static final float offsetValue = (float)1/65;
+	static final float offsetValueForCheck = (float) 1/65;
 	
 	int valueOfPixel;
 	
@@ -32,14 +33,15 @@ public class Pixel extends Location{
 	
 	//Compares pixel value for similarity with specified offset and returns true if they are *similar* (as in from the same square)
 	protected boolean comparePixels(Pixel pixel){
-		if(valueOfPixel>(pixel.valueOfPixel-(maxValueOfPixel*offsetValue)) && (valueOfPixel<(pixel.valueOfPixel+(maxValueOfPixel*offsetValue)))){
+		if(valueOfPixel>(pixel.valueOfPixel-(maxValueOfPixel*offsetValueForCheck)) && (valueOfPixel<(pixel.valueOfPixel+(maxValueOfPixel*offsetValueForCheck)))){
 			return true;
 		}
 		return false;
 	}
 	//Same as comparePixels but working directly on Pixel integer value
 	protected boolean compareToPixelFromValue(int pixelValue){
-		if(valueOfPixel>(pixelValue-(maxValueOfPixel*offsetValue)) && (valueOfPixel<(pixelValue+(maxValueOfPixel*offsetValue)))){
+		//System.out.println(maxValueOfPixel*offsetValue);
+		if((valueOfPixel>(pixelValue-(maxValueOfPixel*offsetValueForCheck))) && (valueOfPixel<(pixelValue+(maxValueOfPixel*offsetValueForCheck)))){
 			return true;
 		}
 		return false;

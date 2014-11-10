@@ -18,7 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 
 public class MainClass  {
-	static Image imageScaledFirst, imageScaledSecond, imageScaledThird, imageScaledFourth;
+	static Image imageScaledFirst, imageScaledFirstModified, imageScaledSecond, imageScaledThird, imageScaledFourth;
 
   static RenderedImage load(byte[] data) throws Exception{
     Image image = null;
@@ -55,8 +55,6 @@ public class MainClass  {
 	  		position2=1;
 	  		break;
 	  }
-	  System.out.println(writableRaster.getHeight());
-	  System.out.println(writableRaster.getWidth());
 	  for(int y=0; y<writableRaster.getHeight()-1; y++,y++){
 		  for(int x=1; x<writableRaster.getWidth()-1; x++,x++){
 			  int[] pixArray = new int[1];
@@ -77,7 +75,7 @@ public class MainClass  {
     String path;
     if (args.length==0) {
       path = JOptionPane.showInputDialog(null, "Image Path",
-      "/home/wookieee/Desktop/dyplom/testphotos/DSC00060.tiff");
+      "/home/l.krolak/Desktop/Untitled Folder/dyplom-wookie/DSC00060.tiff");
     }
     else {
       path = args[0];
@@ -94,54 +92,71 @@ public class MainClass  {
     
     //MY SHIT
     RenderedImage postProcessingImageFirstColour = splitColour(im, 00);
-    RenderedImage postProcessingImageSecondColour = splitColour(im, 01);
-    RenderedImage postProcessingImageThirdColour = splitColour(im, 10);
-    RenderedImage postProcessingImageFourthColour = splitColour(im, 11);
+    RenderedImage postProcessingImageFirstColourModified = splitColour(im, 00);
+//    RenderedImage postProcessingImageSecondColour = splitColour(im, 01);
+//    RenderedImage postProcessingImageThirdColour = splitColour(im, 10);
+//    RenderedImage postProcessingImageFourthColour = splitColour(im, 11);
+    
+    //Do some postprocessing on postProcessingImageFirstColourModified
+    postProcessingImageFirstColourModified = ImageAdapter.runAlgorithm(postProcessingImageFirstColourModified, 0, 0);
+    
+    
     //MY SHIT END
     Image imageFirst = PlanarImage.wrapRenderedImage(postProcessingImageFirstColour).getAsBufferedImage();
-    Image imageSecond = PlanarImage.wrapRenderedImage(postProcessingImageSecondColour).getAsBufferedImage();
-    Image imageThird = PlanarImage.wrapRenderedImage(postProcessingImageThirdColour).getAsBufferedImage();
-    Image imageFourth = PlanarImage.wrapRenderedImage(postProcessingImageFourthColour).getAsBufferedImage();
+    Image imageFirstModified = PlanarImage.wrapRenderedImage(postProcessingImageFirstColourModified).getAsBufferedImage();
+//    Image imageSecond = PlanarImage.wrapRenderedImage(postProcessingImageSecondColour).getAsBufferedImage();
+//    Image imageThird = PlanarImage.wrapRenderedImage(postProcessingImageThirdColour).getAsBufferedImage();
+//    Image imageFourth = PlanarImage.wrapRenderedImage(postProcessingImageFourthColour).getAsBufferedImage();
     
     // make sure that the image is not too big
     //  scale with a width of 500 
-    imageScaledFirst = imageFirst.getScaledInstance(500, -1,  Image.SCALE_SMOOTH);
-    imageScaledSecond = imageSecond.getScaledInstance(500, -1,  Image.SCALE_SMOOTH);
-    imageScaledThird = imageThird.getScaledInstance(500, -1,  Image.SCALE_SMOOTH);
-    imageScaledFourth = imageFourth.getScaledInstance(500, -1,  Image.SCALE_SMOOTH);
+    imageScaledFirst = imageFirst.getScaledInstance(1000, -1,  Image.SCALE_SMOOTH);
+    imageScaledFirstModified = imageFirstModified.getScaledInstance(1000, -1,  Image.SCALE_SMOOTH);
+//    imageScaledSecond = imageSecond.getScaledInstance(500, -1,  Image.SCALE_SMOOTH);
+//    imageScaledThird = imageThird.getScaledInstance(500, -1,  Image.SCALE_SMOOTH);
+//    imageScaledFourth = imageFourth.getScaledInstance(500, -1,  Image.SCALE_SMOOTH);
     //
     //System.out.println("image: " + path + "\n" + image);
     //
-    Thread t1 = new Thread(new Runnable(){
-    	@Override
-    	public void run() {
-    		JOptionPane.showMessageDialog(null, new JLabel(new ImageIcon(imageScaledFirst)), "Green1", JOptionPane.INFORMATION_MESSAGE);
-    	}
-    });
-    t1.start();
+//    Thread t1 = new Thread(new Runnable(){
+//    	@Override
+//    	public void run() {
+//    		JOptionPane.showMessageDialog(null, new JLabel(new ImageIcon(imageScaledFirst)), "Green1", JOptionPane.INFORMATION_MESSAGE);
+//    	}
+//    });
+//    t1.start();
     
-    Thread t2 = new Thread(new Runnable(){
+    Thread t1Modified = new Thread(new Runnable(){
     	@Override
     	public void run() {
-    		JOptionPane.showMessageDialog(null, new JLabel(new ImageIcon(imageScaledSecond)), "Blue", JOptionPane.INFORMATION_MESSAGE);
+    		JOptionPane.showMessageDialog(null, new JLabel(new ImageIcon(imageScaledFirstModified)), "Green1 - Modified", JOptionPane.INFORMATION_MESSAGE);
     	}
     });
-    t2.start();
+    t1Modified.start();
     
-    Thread t3 = new Thread(new Runnable(){
-    	@Override
-    	public void run() {
-    		JOptionPane.showMessageDialog(null, new JLabel(new ImageIcon(imageScaledThird)), "Red", JOptionPane.INFORMATION_MESSAGE);
-    	}
-    });
-    t3.start();
     
-    Thread t4 = new Thread(new Runnable(){
-    	@Override
-    	public void run() {
-    		JOptionPane.showMessageDialog(null, new JLabel(new ImageIcon(imageScaledFourth)), "Green2", JOptionPane.INFORMATION_MESSAGE);
-    	}
-    });
-    t4.start();
+//    Thread t2 = new Thread(new Runnable(){
+//    	@Override
+//    	public void run() {
+//    		JOptionPane.showMessageDialog(null, new JLabel(new ImageIcon(imageScaledSecond)), "Blue", JOptionPane.INFORMATION_MESSAGE);
+//    	}
+//    });
+//    t2.start();
+//    
+//    Thread t3 = new Thread(new Runnable(){
+//    	@Override
+//    	public void run() {
+//    		JOptionPane.showMessageDialog(null, new JLabel(new ImageIcon(imageScaledThird)), "Red", JOptionPane.INFORMATION_MESSAGE);
+//    	}
+//    });
+//    t3.start();
+//    
+//    Thread t4 = new Thread(new Runnable(){
+//    	@Override
+//    	public void run() {
+//    		JOptionPane.showMessageDialog(null, new JLabel(new ImageIcon(imageScaledFourth)), "Green2", JOptionPane.INFORMATION_MESSAGE);
+//    	}
+//    });
+//    t4.start();
   }
 }
