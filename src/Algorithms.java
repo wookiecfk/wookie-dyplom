@@ -29,7 +29,7 @@ public class Algorithms {
 				pixArray = imageRaster.getPixel(i, j, pixArray);
 				blackPixel = new Pixel(i, j, pixArray[0]);
 				if(blackPixel.compareToPixelFromValue(0)){
-					if(checkForSquarePresence(blackPixel, imageRaster)){
+					if(checkForSquarePresence(blackPixel, blackPixel, imageRaster,20,20)){
 						break searchingForBlackPixelLoop;
 					}
 				}
@@ -120,10 +120,150 @@ public class Algorithms {
 		
 	}
 	/*
-	 * Test algorithm - debug only
+	 *  
+	 * DSC00060,61,62 - STARTING LOCATION: (910,530)
+	 * DSC00063 - STARTING LOCATION: (905,570)
+	 * DSC00064 - STARTING LOCATION: (905,540)
+	 * DSC00065 - STARTING LOCATION: (905,550)
+	 * DSC00066 - STARTING LOCATION: (900,560)
+	 * DSC00067 - STARTING LOCATION: (900,570)
+	 * DSC00068 - STARTING LOCATION: (890,580)
+	 * 
+	 * ALL DSCs (SONY) - MOVEMENT LOCATION: (-(i*5)+(j*245), (i*246)+(j*4))
+	 * 
+	 * DSC_0041 - STARTING LOCATION (1340, 810)
+	 * DSC_0042 - STARTING LOCATION (1220, 800)
+	 * DSC_0043 - STARTING LOCATION (1220, 800)
+	 * DSC_0044 - STARTING LOCATION (1220, 800)
+	 * DSC_0045 - STARTING LOCATION (1220, 800)
+	 * DSC_0046 - STARTING LOCATION (1220, 800)
+	 * DSC_0047 - STARTING LOCATION (1220, 820)
+	 * DSC_0048 - STARTING LOCATION (1220, 820)
+	 * DSC_0049 - STARTING LOCATION (1220, 810)
+	 * 
+	 * ALL DSCs (NIKON) - MOVEMENT LOCATION: (-(i*5)+(j*304), (i*304)+(j*4))
+	 * 
+	 * Return values: listOfParams[0] = startValueX
+	 * 				  listOfParams[1] = startValueY
+	 * 				  listOfParams[2] = moveValueIX
+	 * 				  listOfParams[3] = moveValueJX
+	 * 				  listOfParams[4] = moveValueIY
+	 * 				  listOfParams[5] = moveValueJY
 	 */
-	static void mainAlgorithmTest(WritableRaster imageRaster){
-		Location location = new Location(800,480);
+	static List<Integer> returnListOfParams(String path){
+		String DSCSony = "DSC00";
+		String DSC60 = "DSC00060";
+		String DSC61 = "DSC00061";
+		String DSC62 = "DSC00062";
+		String DSC63 = "DSC00063";
+		String DSC64 = "DSC00064";
+		String DSC65 = "DSC00065";
+		String DSC66 = "DSC00066";
+		String DSC67 = "DSC00067";
+		String DSC68 = "DSC00068";
+		
+		String DSCNikon = "DSC_00";
+		String DSC41 = "DSC_0041";
+		String DSC42 = "DSC_0042";
+		String DSC43 = "DSC_0043";
+		String DSC44 = "DSC_0044";
+		String DSC45 = "DSC_0045";
+		String DSC46 = "DSC_0046";
+		String DSC47 = "DSC_0047";
+		String DSC48 = "DSC_0048";
+		String DSC49 = "DSC_0049";
+		
+		ArrayList<Integer> listOfParams = new ArrayList<Integer>();
+		
+		if(path.contains(DSCSony)){
+			if(path.contains(DSC60)||path.contains(DSC61)||path.contains(DSC62)){
+				listOfParams.add(910);
+				listOfParams.add(530);
+			}
+			else if(path.contains(DSC63)){
+				listOfParams.add(905);
+				listOfParams.add(570);
+			}
+			else if(path.contains(DSC64)){
+				listOfParams.add(905);
+				listOfParams.add(540);
+			}
+			else if(path.contains(DSC65)){
+				listOfParams.add(905);
+				listOfParams.add(550);
+			}
+			else if(path.contains(DSC66)){
+				listOfParams.add(900);
+				listOfParams.add(560);
+			}
+			else if(path.contains(DSC67)){
+				listOfParams.add(900);
+				listOfParams.add(570);
+			}
+			else if(path.contains(DSC68)){
+				listOfParams.add(890);
+				listOfParams.add(580);
+			}
+			
+			listOfParams.add(-5);
+			listOfParams.add(245);
+			listOfParams.add(246);
+			listOfParams.add(4);
+		}
+		else if(path.contains(DSCNikon)){
+			if(path.contains(DSC41)){
+				listOfParams.add(1340);
+				listOfParams.add(810);
+			}
+			else if(path.contains(DSC42)||path.contains(DSC43)||path.contains(DSC44)||path.contains(DSC45)
+					||path.contains(DSC46)){
+						listOfParams.add(1220);
+						listOfParams.add(800);
+					}
+			else if(path.contains(DSC47)||path.contains(DSC48)){
+				listOfParams.add(1220);
+				listOfParams.add(820);
+			}
+			else if(path.contains(DSC49)){
+				listOfParams.add(1220);
+				listOfParams.add(810);
+			}
+			listOfParams.add(-5);
+			listOfParams.add(304);
+			listOfParams.add(304);
+			listOfParams.add(4);
+		}
+		
+		
+		return listOfParams;
+	}
+	
+	
+	static void mainAlgorithmTest(WritableRaster imageRaster, String path, String colour, boolean isReference){
+		
+		List<Integer> listOfParams = returnListOfParams(path);
+		int startX, startY, moveIX, moveJX, moveIY, moveJY;
+		startX = listOfParams.get(0);
+		startY = listOfParams.get(1);
+		moveIX = listOfParams.get(2);
+		moveJX = listOfParams.get(3);
+		moveIY = listOfParams.get(4);
+		moveJY = listOfParams.get(5);
+		
+		List<Location> locationList = new ArrayList<Location>();
+		Location iteratingLocation=null;
+		for (int i=0; i<10; i++){
+			for(int j=0; j<14; j++){
+				iteratingLocation = new Location(startX +(i*moveIX) +(j*moveJX), startY +(i*moveIY) +(j*moveJY));
+				locationList.add(iteratingLocation);
+			}
+		}
+		
+		for(int i=0; i<10; i++){
+			for(int j=0; j<14; j++){
+				checkSquareAtLocation(locationList.get((i*14) + j), imageRaster, 60, 60, colour, isReference);
+			}
+		}
 //		Pixel startPixel = Pixel.getPixelFromLocation(location, imageRaster);
 //		Location newEdgeLocation2 = findEdge(startPixel, 30, 30, imageRaster, EdgeType.BOTTOM);
 //		Pixel startPixel2 = Pixel.getPixelFromLocation(newEdgeLocation2, imageRaster);
@@ -132,20 +272,25 @@ public class Algorithms {
 //		checkSquareAtLocation(newEdgeLocation2, imageRaster, 30, 30);	
 //		checkSquareAtLocation(newEdgeLocation3, imageRaster, 30, 30);	
 
-		Pixel startPixel = Pixel.getPixelFromLocation(location, imageRaster);
-		SquareLocation squareLocationCenter = findCenter(startPixel, imageRaster);
-		Location location2 = squareLocationCenter.getGeometricalCenter();
-		Location location3 = squareLocationCenter.getLeftEdge();
-		Location location4 = squareLocationCenter.getRightEdge();
-		Location location5 = squareLocationCenter.getTopEdge();
-		Location location6 = squareLocationCenter.getBottomEdge();
-		checkSquareAtLocation(location, imageRaster, 30, 30);
-		checkSquareAtLocation(location2, imageRaster, 30, 30);
-		checkSquareAtLocation(location3, imageRaster, 30, 30);
-		checkSquareAtLocation(location4, imageRaster, 30, 30);
-		checkSquareAtLocation(location5, imageRaster, 30, 30);
-		checkSquareAtLocation(location6, imageRaster, 30, 30);
-//		Location newEdgeLocation = findEdge(startPixel, 30, 30, imageRaster,EdgeType.RIGHT);
+//		Pixel startPixel = Pixel.getPixelFromLocation(location, imageRaster);
+		//Location white11Location = findWhiteSquareTopLeft(imageRaster,70,70);
+		//checkSquareAtLocation(white11Location, imageRaster, 30, 30);
+
+//		SquareLocation squareLocationCenter = findCenter(startPixel, imageRaster);
+
+//		Location location2 = squareLocationCenter.getGeometricalCenter();
+//		Location location3 = squareLocationCenter.getLeftEdge();
+//		Location location4 = squareLocationCenter.getRightEdge();
+//		Location location5 = squareLocationCenter.getTopEdge();
+//		Location location6 = squareLocationCenter.getBottomEdge();
+//		checkSquareAtLocation(location, imageRaster, 30, 30);
+//		checkSquareAtLocation(location2, imageRaster, 30, 30);
+//		checkSquareAtLocation(location3, imageRaster, 30, 30);
+//		checkSquareAtLocation(location4, imageRaster, 30, 30);
+//		checkSquareAtLocation(location5, imageRaster, 30, 30);
+//		checkSquareAtLocation(location6, imageRaster, 30, 30);
+
+		//		Location newEdgeLocation = findEdge(startPixel, 30, 30, imageRaster,EdgeType.RIGHT);
 //		Pixel startPixel2 = Pixel.getPixelFromLocation(newEdgeLocation, imageRaster);
 //		Location newEdgeLocation2 = findEdge(startPixel2, 30, 30, imageRaster, EdgeType.RIGHT);
 //		checkSquareAtLocation(location, imageRaster, 30, 30);
@@ -194,32 +339,43 @@ public class Algorithms {
 	/*
 	 * Checking whether or not a chosen pixel is part of actual square by searching for dimensions using lines
 	 */
-	static boolean checkForSquarePresence(Pixel inputPixel, WritableRaster imageRaster){
-			boolean[] stopExecutionFlags = new boolean[8];
-			int[] valueX = {0, 1, 1, 1, 0, -1, -1, -1};
-			int[] valueY = {-1, -1, 0, 1, 1, 1, 0, -1};
-			
-			for(int i=0; i<100; i++){
-				for(int j=0; j<stopExecutionFlags.length; j++){
-					if(!stopExecutionFlags[j]){
-						Location currentLocation = new Location(inputPixel.getPositionX()+(valueX[j]*i), inputPixel.getPositionY()+(valueY[j]*i));
-						Pixel currentPixel = Pixel.getPixelFromLocation(currentLocation, imageRaster);
-//						int currentPixelValue[] = new int[1];
-//						currentPixelValue = imageRaster.getPixel(1, 1, currentPixelValue);			//WHAT THE FUCK IS THIS SHIT 
-						boolean similarityFlag = inputPixel.comparePixels(currentPixel);
-						stopExecutionFlags[j] = !similarityFlag;
-						
-					}
+	static boolean checkForSquarePresence(Pixel inputPixel, Pixel currentPixel, WritableRaster imageRaster, int width, int height){
+		for(int i=0-(width/2); i<(width/2); i++){
+			for(int j=0-(height/2); j<(height/2); j++){
+				int[] pixArray = new int[1];
+				pixArray = imageRaster.getPixel(i+currentPixel.getPositionX(), j+currentPixel.getPositionY(), pixArray);
+				Location pixLocation = new Location(i,j);
+				if(!inputPixel.compareToPixelFromValue(pixArray[0])){
+					return false;
 				}
 			}
-			for(int i=1; i<8; i++){
-				if(!stopExecutionFlags[i] && !stopExecutionFlags[i-1]){
-					return true;
-				}
-			}
-			
-			
-		return false;
+		}
+		return true;
+//			boolean[] stopExecutionFlags = new boolean[8];
+//			int[] valueX = {0, 1, 1, 1, 0, -1, -1, -1};
+//			int[] valueY = {-1, -1, 0, 1, 1, 1, 0, -1};
+//			
+//			for(int i=0; i<100; i++){
+//				for(int j=0; j<stopExecutionFlags.length; j++){
+//					if(!stopExecutionFlags[j]){
+//						Location currentLocation = new Location(inputPixel.getPositionX()+(valueX[j]*i), inputPixel.getPositionY()+(valueY[j]*i));
+//						Pixel currentPixel = Pixel.getPixelFromLocation(currentLocation, imageRaster);
+////						int currentPixelValue[] = new int[1];
+////						currentPixelValue = imageRaster.getPixel(1, 1, currentPixelValue);			//WHAT THE FUCK IS THIS SHIT 
+//						boolean similarityFlag = inputPixel.comparePixels(currentPixel);
+//						stopExecutionFlags[j] = !similarityFlag;
+//						
+//					}
+//				}
+//			}
+//			for(int i=1; i<8; i++){
+//				if(!stopExecutionFlags[i] && !stopExecutionFlags[i-1]){
+//					return true;
+//				}
+//			}
+//			
+//			
+//		return false;
 	}
 	
 	/*
@@ -239,8 +395,10 @@ public class Algorithms {
 			}
 		}
 	}
-	
-	static void printSquarePixelValues(Location startPosition, int width, int height, int offsetX, int offsetY, WritableRaster imageRaster){
+	/*
+	 * Also adds them to ImageData appropriate field.
+	 */
+	static void printSquarePixelValues(Location startPosition, int width, int height, int offsetX, int offsetY, WritableRaster imageRaster, String colour, boolean isReference){
 		int minPixel=65535;
 		int maxPixel=0;
 		long allPixelsValues=0;
@@ -265,12 +423,40 @@ public class Algorithms {
 		System.out.println("MIN PIXEL = ");
 		System.out.println(minPixel);
 		System.out.println("AVERAGE VALUE OF PIXELS");
-		float averagePixelValue =  allPixelsValues/numberOfPixels;
+		double averagePixelValue =  allPixelsValues/numberOfPixels;
 		System.out.println(averagePixelValue);
+		if(isReference){
+			if(colour.equals("Green1")){
+				ImageData.listOfReferenceGreen1.add(averagePixelValue);
+			}
+			else if(colour.equals("Green2")){
+				ImageData.listOfReferenceGreen2.add(averagePixelValue);
+			}
+			else if(colour.equals("Blue")){
+				ImageData.listOfReferenceBlue.add(averagePixelValue);
+			}
+			else if(colour.equals("Red")){
+				ImageData.listOfReferenceRed.add(averagePixelValue);
+			}
+		}
+		else if(!isReference){
+			if(colour.equals("Green1")){
+				ImageData.listOfComparedGreen1.add(averagePixelValue);
+			}
+			else if(colour.equals("Green2")){
+				ImageData.listOfComparedGreen2.add(averagePixelValue);
+			}
+			else if(colour.equals("Blue")){
+				ImageData.listOfComparedBlue.add(averagePixelValue);
+			}
+			else if(colour.equals("Red")){
+				ImageData.listOfComparedRed.add(averagePixelValue);
+			}
+		}
 	}
 	
-	static void checkSquareAtLocation(Location location, WritableRaster imageRaster, int width, int height){
-		printSquarePixelValues(location, width, height, 0, 0, imageRaster);
+	static void checkSquareAtLocation(Location location, WritableRaster imageRaster, int width, int height, String colour, boolean isReference){
+		printSquarePixelValues(location, width, height, 0, 0, imageRaster, colour, isReference);
 		printMarker(location, imageRaster, width, height);
 	}
 	
@@ -296,6 +482,24 @@ public class Algorithms {
 
 		return squareLocation;
 	}
+	
+	static Location findWhiteSquareTopLeft(WritableRaster imageRaster, int width, int height){
+		Pixel whitePixel =  new Pixel(0,0,65000);
+		System.out.println(whitePixel.getValueOfPixel());
+			for(int i=width+1; i<imageRaster.getWidth()-1; i++){
+				for(int j=height+1; j<imageRaster.getHeight()-1; j++){
+					int[] pixArray = new int[1];
+					pixArray = imageRaster.getPixel(i, j, pixArray);
+					Location pixLocation = new Location(i,j);
+					Pixel currentPixel = Pixel.getPixelFromLocation(pixLocation, imageRaster);
+					if(checkForSquarePresence(whitePixel, currentPixel, imageRaster, width, height)){
+						return pixLocation;
+					}
+				}
+			}
+		return null;
+	}
+	
 	
 	/*Moves through specified number of edges in specified direction (number of edges and direction in input parameters)
 	 * */

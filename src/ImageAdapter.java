@@ -10,7 +10,7 @@ public class ImageAdapter {
 	static int minPixelValue=20000;
 	static int maxPixelValue=20000;
 	
-	static RenderedImage runAlgorithm(RenderedImage fullImage, int position1, int position2){
+	static RenderedImage runAlgorithm(RenderedImage fullImage, int position1, int position2, String path, String colour, boolean isReference){
 		//Premodifications
 		PlanarImage fullChangeableImage = PlanarImage.wrapRenderedImage(fullImage);
 		Raster raster = fullChangeableImage.getData();
@@ -38,7 +38,7 @@ public class ImageAdapter {
 		  //System.out.println(maxPixelValue);
 		//Run processing algorithms here
 		
-		Algorithms.mainAlgorithmTest(writableRaster);
+		Algorithms.mainAlgorithmTest(writableRaster, path, colour, isReference);
 		
 		//Postmodifications
 		BufferedImage fullChangedImage = fullChangeableImage.getAsBufferedImage();

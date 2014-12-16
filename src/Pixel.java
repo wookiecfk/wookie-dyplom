@@ -10,7 +10,7 @@ public class Pixel extends Location{
 	
 	int valueOfPixel;
 	
-	protected Pixel(int mPositionX, int mPositionY, int valueOfPixel){
+	public Pixel(int mPositionX, int mPositionY, int valueOfPixel){
 		super(mPositionX, mPositionY);
 		this.valueOfPixel = valueOfPixel;
 	}
